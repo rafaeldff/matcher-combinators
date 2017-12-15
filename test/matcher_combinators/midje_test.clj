@@ -1,6 +1,5 @@
-(ns matcher-combinators.checkers-test
+(ns matcher-combinators.midje-test
   (:require [midje.sweet :as midje :refer [fact facts future-fact =>]]
-            [matcher-combinators.parser]
             [matcher-combinators.midje :as ch]
             [matcher-combinators.matchers :as m]
             [matcher-combinators.core :as c]))
