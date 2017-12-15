@@ -1,5 +1,5 @@
 (ns matcher-combinators.midje-test
-  (:require [midje.sweet :as midje :refer [fact facts future-fact =>]]
+  (:require [midje.sweet :as midje :refer [fact facts =>]]
             [matcher-combinators.midje :as ch]
             [matcher-combinators.matchers :as m]
             [matcher-combinators.core :as c]))
@@ -23,11 +23,6 @@
 (fact "map in a sequence in a map"
   {:a [{:bb 1} {:cc 2 :dd 3}] :b 4} => (ch/match {:a [{:bb 1} {:cc 2 :dd 3}] :b 4})
   {:a [{:bb 1} {:cc 2 :dd 3}] :b 4} => (ch/match (m/equals-map {:a [{:bb 1} {:cc 2 :dd 3}] :b 4})))
-
-(future-fact "nuanced map in a sequence in a map behavior"
-  ;; Should the following 2 tests pass?
-  {:a [{:bb 1} {:cc 2 :dd 3}] :b 4} => (ch/match {:a [{:bb 1} {:cc 2}]})
-  {:a [{:bb 1} {:cc 2 :dd 3}] :b 4} => (ch/match {:a [{:bb 1} {:cc 2}] :b 4}))
 
 (fact "use midje checkers inside matchers"
   {:a {:bb 1} :c 2} => (ch/match (m/equals-map {:a {:bb midje/anything} :c 2}))
@@ -70,11 +65,12 @@
   {:a 1 :b 2} => (midje/just [[:a 1] [:b 2]])
   {:a 1 :b 2} =not=> (ch/match (m/equals-seq [[:a 1] [:b 2]])))
 
-(future-fact "dealing with sets"
-  #{3 8 1} => (midje/just [odd? 3 even?])
-  ;; When would someone write a test like this:
-  ;; and how is the best way to write such tests using matcher-combinators?
-  #{3 8 1} =not=> (ch/match (m/equals-seq [(midje/as-checker odd?) 3 (midje/as-checker even?)])))
+(facts "dealing with sets"
+ (fact "midje set checker example"
+    #{3 8 1} => (midje/just [odd? 3 even?]))
+ (fact "to match sets, you need to turn it into a list"
+  #{3 8 1} =not=> (ch/match (m/equals-seq [(midje/as-checker odd?) 3 (midje/as-checker even?)]))
+  (seq #{3 8 1}) => (ch/match (m/in-any-order [(midje/as-checker odd?) 3 (midje/as-checker even?)]))))
 
 (fact [5 1 4 2] => (midje/contains [1 2 5] :gaps-ok :in-any-order))
 (fact [5 1 4 2] => (ch/match (m/sublist [5 1]))
