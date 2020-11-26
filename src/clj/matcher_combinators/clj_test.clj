@@ -59,6 +59,7 @@
               {:type     :fail
                :message  ~msg
                :expected '~form
+               ::actual-value actual#
                :actual   (tagged-for-pretty-printing (list '~'not (list 'match? matcher# actual#))
                                                      result#)})))
          match?#)
@@ -68,6 +69,7 @@
         {:type     :fail
          :message  ~msg
          :expected (str "The first argument of match? needs to be a matcher (implement the match protocol)")
+         ::actual-value actual#
          :actual   '~form}))))
 
 (defmethod clojure.test/assert-expr 'match-with? [msg form]
